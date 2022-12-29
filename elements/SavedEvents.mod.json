@@ -1,0 +1,51 @@
+{
+  "_fv": 33,
+  "_type": "config",
+  "definition": {
+    "pools": [
+      {
+        "category": "Events",
+        "entries": [
+          {
+            "item": {
+              "value": ""
+            },
+            "silkTouchMode": 0,
+            "block": {
+              "value": ""
+            },
+            "logicField": 0,
+            "numberField": 0.0,
+            "textDefault": "",
+            "comment": "Whether to capture block type events",
+            "vardisplay": "Block Events",
+            "varname": "blockevents",
+            "enablecomment": true,
+            "onlyComment": false,
+            "entityType": "EntityAgeable"
+          },
+          {
+            "item": {
+              "value": ""
+            },
+            "silkTouchMode": 0,
+            "block": {
+              "value": ""
+            },
+            "logicField": 0,
+            "numberField": 0.0,
+            "textDefault": "",
+            "comment": "Whether to capture entity type events",
+            "vardisplay": "Entity Events",
+            "varname": "entityevents",
+            "enablecomment": true,
+            "onlyComment": false,
+            "entityType": "EntityAgeable"
+          }
+        ]
+      }
+    ],
+    "file": "StEvents",
+    "configType": 0
+  }
+}
