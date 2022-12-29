@@ -9,6 +9,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.command.CommandSource;
 
+import net.mcreator.datalogdelta.configuration.SavedEventsConfiguration;
 import net.mcreator.datalogdelta.DatalogdeltaMod;
 
 import java.util.Random;
@@ -67,42 +68,44 @@ public class CommandLogProcedure {
 		File DataStorageFile = new File("");
 		String DataType = "";
 		String DataText = "";
-		DataText = ("Entity " + entity.getDisplayName().getString() + " Executed Command " + command);
-		DataType = "Command";
-		DataStorageFile = (File) new File(
-				(FMLPaths.GAMEDIR.get().toString() + "\\DataLogs\\"
-						+ new java.text.SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()) + "\\Chat"),
-				File.separator + (entity.getDisplayName().getString() + "-Type-" + DataType + Calendar.getInstance().get(Calendar.SECOND) + "-"
-						+ Calendar.getInstance().get(Calendar.MINUTE) + "-" + Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + "-"
-						+ MathHelper.nextDouble(new Random(), 1, 25) + ".txt"));
-		if (DataStorageFile.exists()) {
-			JSOBJCT.addProperty("DataLog", DataText);
-			{
-				Gson mainGSONBuilderVariable = new GsonBuilder().setPrettyPrinting().create();
+		if (SavedEventsConfiguration.CHATEVENTS.get() == true) {
+			DataText = ("Entity " + entity.getDisplayName().getString() + " Executed Command " + command);
+			DataType = "Command";
+			DataStorageFile = (File) new File(
+					(FMLPaths.GAMEDIR.get().toString() + "\\DataLogs\\"
+							+ new java.text.SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()) + "\\Chat"),
+					File.separator + (entity.getDisplayName().getString() + "-Type-" + DataType + Calendar.getInstance().get(Calendar.SECOND) + "-"
+							+ Calendar.getInstance().get(Calendar.MINUTE) + "-" + Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + "-"
+							+ MathHelper.nextDouble(new Random(), 1, 25) + ".txt"));
+			if (DataStorageFile.exists()) {
+				JSOBJCT.addProperty("DataLog", DataText);
+				{
+					Gson mainGSONBuilderVariable = new GsonBuilder().setPrettyPrinting().create();
+					try {
+						FileWriter fileWriter = new FileWriter(DataStorageFile);
+						fileWriter.write(mainGSONBuilderVariable.toJson(JSOBJCT));
+						fileWriter.close();
+					} catch (IOException exception) {
+						exception.printStackTrace();
+					}
+				}
+			} else {
 				try {
-					FileWriter fileWriter = new FileWriter(DataStorageFile);
-					fileWriter.write(mainGSONBuilderVariable.toJson(JSOBJCT));
-					fileWriter.close();
+					DataStorageFile.getParentFile().mkdirs();
+					DataStorageFile.createNewFile();
 				} catch (IOException exception) {
 					exception.printStackTrace();
 				}
-			}
-		} else {
-			try {
-				DataStorageFile.getParentFile().mkdirs();
-				DataStorageFile.createNewFile();
-			} catch (IOException exception) {
-				exception.printStackTrace();
-			}
-			JSOBJCT.addProperty("DataLog", DataText);
-			{
-				Gson mainGSONBuilderVariable = new GsonBuilder().setPrettyPrinting().create();
-				try {
-					FileWriter fileWriter = new FileWriter(DataStorageFile);
-					fileWriter.write(mainGSONBuilderVariable.toJson(JSOBJCT));
-					fileWriter.close();
-				} catch (IOException exception) {
-					exception.printStackTrace();
+				JSOBJCT.addProperty("DataLog", DataText);
+				{
+					Gson mainGSONBuilderVariable = new GsonBuilder().setPrettyPrinting().create();
+					try {
+						FileWriter fileWriter = new FileWriter(DataStorageFile);
+						fileWriter.write(mainGSONBuilderVariable.toJson(JSOBJCT));
+						fileWriter.close();
+					} catch (IOException exception) {
+						exception.printStackTrace();
+					}
 				}
 			}
 		}

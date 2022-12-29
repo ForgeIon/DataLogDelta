@@ -41,11 +41,29 @@
             "enablecomment": true,
             "onlyComment": false,
             "entityType": "EntityAgeable"
+          },
+          {
+            "item": {
+              "value": ""
+            },
+            "silkTouchMode": 0,
+            "block": {
+              "value": ""
+            },
+            "logicField": 0,
+            "numberField": 0.0,
+            "textDefault": "",
+            "comment": "Logs chat type events",
+            "vardisplay": "Chat Events",
+            "varname": "chatevents",
+            "enablecomment": true,
+            "onlyComment": false,
+            "entityType": "EntityAgeable"
           }
         ]
       }
     ],
-    "file": "StEvents",
+    "file": "DLD Stored Events",
     "configType": 0
   }
 }

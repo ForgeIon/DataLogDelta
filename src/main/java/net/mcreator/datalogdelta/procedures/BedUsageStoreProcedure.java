@@ -14,6 +14,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.block.BlockState;
 
+import net.mcreator.datalogdelta.configuration.SavedEventsConfiguration;
 import net.mcreator.datalogdelta.DatalogdeltaMod;
 
 import java.util.Random;
@@ -90,43 +91,45 @@ public class BedUsageStoreProcedure {
 		String DataType = "";
 		String DataText = "";
 		com.google.gson.JsonObject JSOBJCT = new com.google.gson.JsonObject();
-		if ((new ItemStack((world.getBlockState(new BlockPos(x, y, z))).getBlock())).getItem() instanceof BedItem) {
-			DataText = ("Player " + entity.getDisplayName().getString() + " Used A Bed At X " + x + ", Y " + y + ", Z " + z);
-			DataType = "BedRC";
-			DataStorageFile = (File) new File(
-					(FMLPaths.GAMEDIR.get().toString() + "\\DataLogs\\"
-							+ new java.text.SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()) + "\\BedSpawnpoint"),
-					File.separator + (entity.getDisplayName().getString() + "-Type-" + DataType + Calendar.getInstance().get(Calendar.SECOND) + "-"
-							+ Calendar.getInstance().get(Calendar.MINUTE) + "-" + Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + "-"
-							+ MathHelper.nextDouble(new Random(), 1, 25) + ".txt"));
-			if (DataStorageFile.exists()) {
-				JSOBJCT.addProperty("DataLog", DataText);
-				{
-					Gson mainGSONBuilderVariable = new GsonBuilder().setPrettyPrinting().create();
+		if (SavedEventsConfiguration.BLOCKEVENTS.get() == true) {
+			if ((new ItemStack((world.getBlockState(new BlockPos(x, y, z))).getBlock())).getItem() instanceof BedItem) {
+				DataText = ("Player " + entity.getDisplayName().getString() + " Used A Bed At X " + x + ", Y " + y + ", Z " + z);
+				DataType = "BedRC";
+				DataStorageFile = (File) new File(
+						(FMLPaths.GAMEDIR.get().toString() + "\\DataLogs\\"
+								+ new java.text.SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()) + "\\BedSpawnpoint"),
+						File.separator + (entity.getDisplayName().getString() + "-Type-" + DataType + Calendar.getInstance().get(Calendar.SECOND)
+								+ "-" + Calendar.getInstance().get(Calendar.MINUTE) + "-" + Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + "-"
+								+ MathHelper.nextDouble(new Random(), 1, 25) + ".txt"));
+				if (DataStorageFile.exists()) {
+					JSOBJCT.addProperty("DataLog", DataText);
+					{
+						Gson mainGSONBuilderVariable = new GsonBuilder().setPrettyPrinting().create();
+						try {
+							FileWriter fileWriter = new FileWriter(DataStorageFile);
+							fileWriter.write(mainGSONBuilderVariable.toJson(JSOBJCT));
+							fileWriter.close();
+						} catch (IOException exception) {
+							exception.printStackTrace();
+						}
+					}
+				} else {
 					try {
-						FileWriter fileWriter = new FileWriter(DataStorageFile);
-						fileWriter.write(mainGSONBuilderVariable.toJson(JSOBJCT));
-						fileWriter.close();
+						DataStorageFile.getParentFile().mkdirs();
+						DataStorageFile.createNewFile();
 					} catch (IOException exception) {
 						exception.printStackTrace();
 					}
-				}
-			} else {
-				try {
-					DataStorageFile.getParentFile().mkdirs();
-					DataStorageFile.createNewFile();
-				} catch (IOException exception) {
-					exception.printStackTrace();
-				}
-				JSOBJCT.addProperty("DataLog", DataText);
-				{
-					Gson mainGSONBuilderVariable = new GsonBuilder().setPrettyPrinting().create();
-					try {
-						FileWriter fileWriter = new FileWriter(DataStorageFile);
-						fileWriter.write(mainGSONBuilderVariable.toJson(JSOBJCT));
-						fileWriter.close();
-					} catch (IOException exception) {
-						exception.printStackTrace();
+					JSOBJCT.addProperty("DataLog", DataText);
+					{
+						Gson mainGSONBuilderVariable = new GsonBuilder().setPrettyPrinting().create();
+						try {
+							FileWriter fileWriter = new FileWriter(DataStorageFile);
+							fileWriter.write(mainGSONBuilderVariable.toJson(JSOBJCT));
+							fileWriter.close();
+						} catch (IOException exception) {
+							exception.printStackTrace();
+						}
 					}
 				}
 			}

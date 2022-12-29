@@ -336,7 +336,7 @@
   "sound_elements": [],
   "language_map": {
     "en_us": {
-      "config.datalogdelta.saved_events": "StEvents"
+      "config.datalogdelta.saved_events": "DLD Stored Events"
     }
   },
   "foldersRoot": {

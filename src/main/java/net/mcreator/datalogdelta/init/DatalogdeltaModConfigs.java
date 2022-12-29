@@ -13,7 +13,7 @@ public class DatalogdeltaModConfigs {
 	@SubscribeEvent
 	public static void register(FMLConstructModEvent event) {
 		event.enqueueWork(() -> {
-			ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SavedEventsConfiguration.SPEC, "StEvents.toml");
+			ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SavedEventsConfiguration.SPEC, "DLD Stored Events.toml");
 		});
 	}
 }

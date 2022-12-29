@@ -10,6 +10,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Entity;
 
+import net.mcreator.datalogdelta.configuration.SavedEventsConfiguration;
 import net.mcreator.datalogdelta.DatalogdeltaMod;
 
 import java.util.Random;
@@ -64,49 +65,51 @@ public class TamedEntityDataStoreProcedure {
 		File DataStorageFile = new File("");
 		String DataType = "";
 		String DataText = "";
-		DataText = ("Entity " + entity.getDisplayName().getString() + " Tamed At X " + entity.getPosX() + ", Y " + entity.getPosY() + ", Z "
-				+ entity.getPosZ() + " By Entity " + sourceentity.getDisplayName().getString() + " At X " + sourceentity.getPosX() + ", Y "
-				+ sourceentity.getPosY() + ", Z " + sourceentity.getPosZ() + ". Is Tamed Entity Child:"
-				+ ((entity instanceof LivingEntity) ? ((LivingEntity) entity).isChild() : false) + ". Tamed Entity HP "
-				+ ((entity instanceof LivingEntity) ? ((LivingEntity) entity).getHealth() : -1) + "/"
-				+ ((entity instanceof LivingEntity) ? ((LivingEntity) entity).getMaxHealth() : -1) + ", Tamer Entity Hp "
-				+ ((sourceentity instanceof LivingEntity) ? ((LivingEntity) sourceentity).getHealth() : -1) + "/"
-				+ ((sourceentity instanceof LivingEntity) ? ((LivingEntity) sourceentity).getMaxHealth() : -1));
-		DataType = "Tamed";
-		DataStorageFile = (File) new File(
-				(FMLPaths.GAMEDIR.get().toString() + "\\DataLogs\\"
-						+ new java.text.SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()) + "\\EntityTamed"),
-				File.separator + (entity.getDisplayName().getString() + "-Type-" + DataType + Calendar.getInstance().get(Calendar.SECOND) + "-"
-						+ Calendar.getInstance().get(Calendar.MINUTE) + "-" + Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + "-"
-						+ MathHelper.nextDouble(new Random(), 1, 25) + ".txt"));
-		if (DataStorageFile.exists()) {
-			JSOBJCT.addProperty("DataLog", DataText);
-			{
-				Gson mainGSONBuilderVariable = new GsonBuilder().setPrettyPrinting().create();
+		if (SavedEventsConfiguration.ENTITYEVENTS.get() == true) {
+			DataText = ("Entity " + entity.getDisplayName().getString() + " Tamed At X " + entity.getPosX() + ", Y " + entity.getPosY() + ", Z "
+					+ entity.getPosZ() + " By Entity " + sourceentity.getDisplayName().getString() + " At X " + sourceentity.getPosX() + ", Y "
+					+ sourceentity.getPosY() + ", Z " + sourceentity.getPosZ() + ". Is Tamed Entity Child:"
+					+ ((entity instanceof LivingEntity) ? ((LivingEntity) entity).isChild() : false) + ". Tamed Entity HP "
+					+ ((entity instanceof LivingEntity) ? ((LivingEntity) entity).getHealth() : -1) + "/"
+					+ ((entity instanceof LivingEntity) ? ((LivingEntity) entity).getMaxHealth() : -1) + ", Tamer Entity Hp "
+					+ ((sourceentity instanceof LivingEntity) ? ((LivingEntity) sourceentity).getHealth() : -1) + "/"
+					+ ((sourceentity instanceof LivingEntity) ? ((LivingEntity) sourceentity).getMaxHealth() : -1));
+			DataType = "Tamed";
+			DataStorageFile = (File) new File(
+					(FMLPaths.GAMEDIR.get().toString() + "\\DataLogs\\"
+							+ new java.text.SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()) + "\\EntityTamed"),
+					File.separator + (entity.getDisplayName().getString() + "-Type-" + DataType + Calendar.getInstance().get(Calendar.SECOND) + "-"
+							+ Calendar.getInstance().get(Calendar.MINUTE) + "-" + Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + "-"
+							+ MathHelper.nextDouble(new Random(), 1, 25) + ".txt"));
+			if (DataStorageFile.exists()) {
+				JSOBJCT.addProperty("DataLog", DataText);
+				{
+					Gson mainGSONBuilderVariable = new GsonBuilder().setPrettyPrinting().create();
+					try {
+						FileWriter fileWriter = new FileWriter(DataStorageFile);
+						fileWriter.write(mainGSONBuilderVariable.toJson(JSOBJCT));
+						fileWriter.close();
+					} catch (IOException exception) {
+						exception.printStackTrace();
+					}
+				}
+			} else {
 				try {
-					FileWriter fileWriter = new FileWriter(DataStorageFile);
-					fileWriter.write(mainGSONBuilderVariable.toJson(JSOBJCT));
-					fileWriter.close();
+					DataStorageFile.getParentFile().mkdirs();
+					DataStorageFile.createNewFile();
 				} catch (IOException exception) {
 					exception.printStackTrace();
 				}
-			}
-		} else {
-			try {
-				DataStorageFile.getParentFile().mkdirs();
-				DataStorageFile.createNewFile();
-			} catch (IOException exception) {
-				exception.printStackTrace();
-			}
-			JSOBJCT.addProperty("DataLog", DataText);
-			{
-				Gson mainGSONBuilderVariable = new GsonBuilder().setPrettyPrinting().create();
-				try {
-					FileWriter fileWriter = new FileWriter(DataStorageFile);
-					fileWriter.write(mainGSONBuilderVariable.toJson(JSOBJCT));
-					fileWriter.close();
-				} catch (IOException exception) {
-					exception.printStackTrace();
+				JSOBJCT.addProperty("DataLog", DataText);
+				{
+					Gson mainGSONBuilderVariable = new GsonBuilder().setPrettyPrinting().create();
+					try {
+						FileWriter fileWriter = new FileWriter(DataStorageFile);
+						fileWriter.write(mainGSONBuilderVariable.toJson(JSOBJCT));
+						fileWriter.close();
+					} catch (IOException exception) {
+						exception.printStackTrace();
+					}
 				}
 			}
 		}

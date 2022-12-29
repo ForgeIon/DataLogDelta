@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.Entity;
 
+import net.mcreator.datalogdelta.configuration.SavedEventsConfiguration;
 import net.mcreator.datalogdelta.DatalogdeltaMod;
 
 import java.util.Random;
@@ -84,47 +85,49 @@ public class ItemPickupDataStoreProcedure {
 		ItemStack ItemStackExtra = ItemStack.EMPTY;
 		String DataType = "";
 		String DataText = "";
-		DataText = ("Entity " + entity.getDisplayName().getString() + " Picked Up Item At X " + x + ", Y " + y + ", Z " + z + ", Item Type "
-				+ itemstack.getDisplayName().getString() + ", Item Count " + (itemstack).getCount() + ", Item Durability "
-				+ ((itemstack).getMaxDamage() - (itemstack).getDamage()) + "/" + (itemstack).getMaxDamage() + ", Is Item Enchanted:"
-				+ (itemstack).isEnchanted() + ", Is Item Is Food:" + itemstack.getItem().isFood() + ", If Food, Item Food Value "
-				+ (itemstack.getItem().isFood() ? itemstack.getItem().getFood().getHealing() : 0) + ", If Food, Item Sat Value "
-				+ (itemstack.getItem().isFood() ? itemstack.getItem().getFood().getSaturation() : 0));
-		DataType = "ItemPickup";
-		DataStorageFile = (File) new File(
-				(FMLPaths.GAMEDIR.get().toString() + "\\DataLogs\\"
-						+ new java.text.SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()) + "\\Item"),
-				File.separator + (entity.getDisplayName().getString() + "-Item-" + itemstack.getDisplayName().getString()
-						+ Calendar.getInstance().get(Calendar.SECOND) + "-" + Calendar.getInstance().get(Calendar.MINUTE) + "-"
-						+ Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + "-" + MathHelper.nextDouble(new Random(), 1, 25) + ".txt"));
-		if (DataStorageFile.exists()) {
-			JSOBJCT.addProperty("DataLog", DataText);
-			{
-				Gson mainGSONBuilderVariable = new GsonBuilder().setPrettyPrinting().create();
+		if (SavedEventsConfiguration.ENTITYEVENTS.get() == true) {
+			DataText = ("Entity " + entity.getDisplayName().getString() + " Picked Up Item At X " + x + ", Y " + y + ", Z " + z + ", Item Type "
+					+ itemstack.getDisplayName().getString() + ", Item Count " + (itemstack).getCount() + ", Item Durability "
+					+ ((itemstack).getMaxDamage() - (itemstack).getDamage()) + "/" + (itemstack).getMaxDamage() + ", Is Item Enchanted:"
+					+ (itemstack).isEnchanted() + ", Is Item Is Food:" + itemstack.getItem().isFood() + ", If Food, Item Food Value "
+					+ (itemstack.getItem().isFood() ? itemstack.getItem().getFood().getHealing() : 0) + ", If Food, Item Sat Value "
+					+ (itemstack.getItem().isFood() ? itemstack.getItem().getFood().getSaturation() : 0));
+			DataType = "ItemPickup";
+			DataStorageFile = (File) new File(
+					(FMLPaths.GAMEDIR.get().toString() + "\\DataLogs\\"
+							+ new java.text.SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()) + "\\Item"),
+					File.separator + (entity.getDisplayName().getString() + "-Item-" + itemstack.getDisplayName().getString()
+							+ Calendar.getInstance().get(Calendar.SECOND) + "-" + Calendar.getInstance().get(Calendar.MINUTE) + "-"
+							+ Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + "-" + MathHelper.nextDouble(new Random(), 1, 25) + ".txt"));
+			if (DataStorageFile.exists()) {
+				JSOBJCT.addProperty("DataLog", DataText);
+				{
+					Gson mainGSONBuilderVariable = new GsonBuilder().setPrettyPrinting().create();
+					try {
+						FileWriter fileWriter = new FileWriter(DataStorageFile);
+						fileWriter.write(mainGSONBuilderVariable.toJson(JSOBJCT));
+						fileWriter.close();
+					} catch (IOException exception) {
+						exception.printStackTrace();
+					}
+				}
+			} else {
 				try {
-					FileWriter fileWriter = new FileWriter(DataStorageFile);
-					fileWriter.write(mainGSONBuilderVariable.toJson(JSOBJCT));
-					fileWriter.close();
+					DataStorageFile.getParentFile().mkdirs();
+					DataStorageFile.createNewFile();
 				} catch (IOException exception) {
 					exception.printStackTrace();
 				}
-			}
-		} else {
-			try {
-				DataStorageFile.getParentFile().mkdirs();
-				DataStorageFile.createNewFile();
-			} catch (IOException exception) {
-				exception.printStackTrace();
-			}
-			JSOBJCT.addProperty("DataLog", DataText);
-			{
-				Gson mainGSONBuilderVariable = new GsonBuilder().setPrettyPrinting().create();
-				try {
-					FileWriter fileWriter = new FileWriter(DataStorageFile);
-					fileWriter.write(mainGSONBuilderVariable.toJson(JSOBJCT));
-					fileWriter.close();
-				} catch (IOException exception) {
-					exception.printStackTrace();
+				JSOBJCT.addProperty("DataLog", DataText);
+				{
+					Gson mainGSONBuilderVariable = new GsonBuilder().setPrettyPrinting().create();
+					try {
+						FileWriter fileWriter = new FileWriter(DataStorageFile);
+						fileWriter.write(mainGSONBuilderVariable.toJson(JSOBJCT));
+						fileWriter.close();
+					} catch (IOException exception) {
+						exception.printStackTrace();
+					}
 				}
 			}
 		}
